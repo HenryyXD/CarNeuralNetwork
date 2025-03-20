@@ -2,24 +2,24 @@ class Sensor {
 
   constructor(car) {
     this.car = car;
-    this.rayCount = 10;
+    this.rayCount = 5;
     this.raySpread = Math.PI / 2; // initial ray angle - final ray angle
     this.rayLength = 150;
     this.rays = [];
     this.readings = [];
   }
   
-  update(roadBorders) {
+  update(roadBorders, traffic) {
     this.#castRays();
     this.readings = [];
     for (let i = 0; i < this.rayCount; i++) {
       this.readings.push(
-        this.#getReadings(this.rays[i], roadBorders)
+        this.#getReadings(this.rays[i], roadBorders, traffic)
       );
     }
   }
   
-  #getReadings(ray, roadBorders) {
+  #getReadings(ray, roadBorders, traffic) {
     let touches = [];
     for (let i = 0; i < roadBorders.length; i++) {
       let touch = Utils.getInstersection(
@@ -31,6 +31,21 @@ class Sensor {
       
       if (touch)
         touches.push(touch);
+    }
+
+    for (let i = 0; i < traffic.length; i++) {
+      let poly = traffic[i].polygons;
+      for (let j = 0; j < poly.length; j++) {
+        let touch = Utils.getInstersection(
+          ray[0],
+          ray[1],
+          poly[j],
+          poly[(j + 1) % poly.length]
+        );
+
+        if (touch)
+          touches.push(touch);
+      }
     }
 
     let closestTouch = touches

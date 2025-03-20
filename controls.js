@@ -1,12 +1,19 @@
 class Controls {
-  constructor() {
+  constructor(type) {
     this.forward = false;
     this.left = false;
     this.right = false;
     this.reverse = false;
     this.handbrake = false;
 
-    this.#addKeyboardListeners();
+    switch (type) {
+      case carTypes.player:
+        this.#addKeyboardListeners();
+        break;
+      case carTypes.traffic:
+        this.forward = true;
+        break;
+    }
   }
 
   #addKeyboardListeners() {
