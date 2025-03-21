@@ -44,7 +44,7 @@ class Sensor {
         );
 
         if (touch)
-          touches.push(touch);
+          touches.push(touch); 
       }
     }
 
@@ -60,8 +60,8 @@ class Sensor {
     this.rays = [];
     for (let i = 0; i < this.rayCount; i++) {
       let rayAngle = Utils.lerp(
-        -this.raySpread / 2,
         this.raySpread / 2,
+        -this.raySpread / 2,
         this.rayCount == 1 ? 0.5 : i / (this.rayCount - 1)
       ) + this.car.angle;
 
