@@ -23,20 +23,21 @@ class Car {
   }
 
   update(roadBorders, traffic) {
-    if (!this.damage) {
-      this.#move();
-      this.#fillPolygons();
-      this.damage = this.#detectCollisions(roadBorders, traffic);    
+    if (this.damage) {
+      return
     }
-
+    this.#move();
+    this.#fillPolygons();
+    this.damage = this.#detectCollisions(roadBorders, traffic);    
+    
     if (this.sensor) {
       this.sensor.update(roadBorders, traffic);
       const offsets = this.sensor.readings.map(
         s => s == null ? 0 : 1 - s.offset
       );
-
+      
       const outputs = NeuralNetwork.feedForward(offsets, this.brain);
-
+      
       if (this.useBrain) {
         this.controls.forward = outputs[0];
         this.controls.left = outputs[1];
@@ -44,6 +45,10 @@ class Car {
         this.controls.reverse = outputs[3];
       }
     }
+  }
+
+  kill() {
+    this.damage = true;
   }
   
   #detectCollisions(roadBorders, traffic) {
@@ -132,7 +137,7 @@ class Car {
     this.y -= Math.cos(this.angle) * this.speed;
   }
 
-  draw(ctx, color) {
+  draw(ctx, color, drawSensor = false) {
     ctx.beginPath();
     ctx.moveTo(this.polygons[0].x, this.polygons[0].y);
     for (let i = 1; i < this.polygons.length; i++) {
@@ -147,7 +152,7 @@ class Car {
     ctx.closePath();
     ctx.fill();
 
-    if (this.sensor)
+    if (this.sensor && drawSensor)
       this.sensor.draw(ctx);
   }
 }

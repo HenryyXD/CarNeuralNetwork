@@ -9,10 +9,10 @@ class Road {
     this.top = -this.infinity;
     this.bottom = this.infinity;
 
-    let topLeft = { x: this.left + 30, y: this.top };
+    let topLeft = { x: this.left, y: this.top };
     let topRight = { x: this.right, y: this.top };
     let bottomLeft = { x: this.left, y: this.bottom };
-    let bottomRight = { x: this.right - 30, y: this.bottom };
+    let bottomRight = { x: this.right, y: this.bottom };
 
     this.borders = [
       [topLeft, bottomLeft],
@@ -48,8 +48,7 @@ class Road {
   }
 
   getLaneCenter(laneIndex) {
-    if (laneIndex < 0) laneIndex = 0;
-    let laneWidth = this.width / this.laneCount;
+    const laneWidth = this.width / this.laneCount;
     return this.left + laneWidth / 2 + Math.min(laneIndex, this.laneCount - 1) * laneWidth;
   }
 }

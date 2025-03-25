@@ -14,6 +14,20 @@ class NeuralNetwork {
 
     return outputs;
   }
+
+  static mutate(network, amount = 1) {
+    network.levels.forEach(level => {
+      for (let i = 0; i < level.biases.length; i++) {
+        level.biases[i] = Utils.lerp(level.biases[i], Math.random() * 2 - 1, amount);
+      }
+
+      for (let i = 0; i < level.weights.length; i++) {
+        for (let j = 0; j < level.weights[i].length; j++) {
+          level.weights[i][j] = Utils.lerp(level.weights[i][j], Math.random() * 2 - 1, amount);
+        }
+      }
+    });
+  }
 }
 
 class Level {
@@ -23,17 +37,17 @@ class Level {
     this.biases = new Array(outputLength);
 
     this.weights = [];
-    for (let i = 0; i < inputLength; i++) {
-      this.weights[i] = new Array(outputLength);
+    for (let inIdx = 0; inIdx < inputLength; inIdx++) {
+      this.weights[inIdx] = new Array(outputLength);
     }
 
     Level.#randomize(this);
   }
 
   static #randomize(level) {
-    for (let i = 0; i < level.inputs.length; i++) {
-      for (let j = 0; j < level.outputs.length; j++) {
-        level.weights[i][j] = Math.random() * 2 - 1;
+    for (let inIdx = 0; inIdx < level.inputs.length; inIdx++) {
+      for (let outIdx = 0; outIdx < level.outputs.length; outIdx++) {
+        level.weights[inIdx][outIdx] = Math.random() * 2 - 1;
       }
     }
 
@@ -43,20 +57,20 @@ class Level {
   }
 
   static feedForward(givenInputs, level) {
-    for (let i = 0; i < level.inputs.length; i++) {
-      level.inputs[i] = givenInputs[i];
+    for (let inIdx = 0; inIdx < level.inputs.length; inIdx++) {
+      level.inputs[inIdx] = givenInputs[inIdx];
     }
 
-    for (let i = 0; i < level.outputs.length; i++) {
+    for (let outIdx = 0; outIdx < level.outputs.length; outIdx++) {
       let sum = 0;
-      for (let j = 0; j < level.inputs.length; j++){
-        sum += level.inputs[j] * level.weights[j][i];
+      for (let inIdx = 0; inIdx < level.inputs.length; inIdx++){
+        sum += level.inputs[inIdx] * level.weights[inIdx][outIdx];
       }
 
-      if (sum > level.biases[i]) {
-        level.outputs[i] = 1;
+      if (sum > level.biases[outIdx]) {
+        level.outputs[outIdx] = 1;
       } else {
-        level.outputs[i] = 0;
+        level.outputs[outIdx] = 0;
       }
     }
 
