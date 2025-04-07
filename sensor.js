@@ -2,9 +2,9 @@ class Sensor {
 
   constructor(car) {
     this.car = car;
-    this.rayCount = 10;
+    this.rayCount = 11;
     this.raySpread = Math.PI / 2; // initial ray angle - final ray angle
-    this.rayLength = 300;
+    this.rayLength = 600;
     this.rays = [];
     this.readings = [];
   }

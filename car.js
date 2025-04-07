@@ -13,6 +13,8 @@ class Car {
     this.angularVelocity = 0.010;
     this.damage = false;
 
+    this.lastLowSpeedTime = performance.now();
+
     this.useBrain = carType == carTypes.AI;
     this.controls = new Controls(carType);
 
@@ -22,13 +24,14 @@ class Car {
     }
   }
 
-  update(roadBorders, traffic) {
+  update(roadBorders, traffic, bounds) {
     if (this.damage) {
-      return
+      return;
     }
+
     this.#move();
     this.#fillPolygons();
-    this.damage = this.#detectCollisions(roadBorders, traffic);    
+    this.damage = this.#detectDamage(roadBorders, traffic, bounds);
     
     if (this.sensor) {
       this.sensor.update(roadBorders, traffic);
@@ -47,11 +50,11 @@ class Car {
     }
   }
 
-  kill() {
-    this.damage = true;
-  }
-  
-  #detectCollisions(roadBorders, traffic) {
+  #detectDamage(roadBorders, traffic, bounds) {
+    if (this.y > bounds) {
+      return true;
+    }
+
     for (let i = 0; i < roadBorders.length; i++) {
       if (Utils.detectPolygonsColision(this.polygons, roadBorders[i]))
         return true;
