@@ -32,6 +32,9 @@ class Car {
     this.#move();
     this.#fillPolygons();
     this.damage = this.#detectDamage(roadBorders, traffic, bounds);
+    if (this.speed < this.maxSpeed * 0.5) {
+      this.lastLowSpeedTime = performance.now();
+    }
     
     if (this.sensor) {
       this.sensor.update(roadBorders, traffic);

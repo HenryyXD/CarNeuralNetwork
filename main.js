@@ -10,10 +10,11 @@ const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9, 3);
 
 const getTrafficMaxSpeed = () => Utils.rndFloat(0.5, 3);
 const trafficCount = 2000;
-const carMaxSpeed = 5;
 const carCount = 1000;
+const carMaxSpeed = 5;
 const bestCarPosPercent = 0.7;
-const mutationAmount = 0.08;
+const mutationAmount = 0.1;
+let generationCount = 1;
 
 let initialTimeStamp, traffic, cars, bestCar, bestCarAlive;
 start();
@@ -63,6 +64,10 @@ function animate(time) {
     save();
 
   if (cars.every(c => c.damage)) {
+    let furtherestCar = cars.reduce((furtherest, cur) => {
+      return (cur.y < furtherest.y) ? cur : furtherest;
+    }, cars[0]);
+    console.log("Generation " + generationCount++ + " - Distance: ", -furtherestCar.y);
     start();
     return;
   }
@@ -131,10 +136,8 @@ function getBestCars() {
     let survivalBonus = (performance.now() - initialTimeStamp) * 0.01;
 
     let lowSpeedPenalty = 0;
-    if (cars[i].speed < carMaxSpeed * 0.5) {
-      lowSpeedPenalty = -50 * (performance.now() - cars[i].lastLowSpeedTime) / 1000;
-    } else {
-      cars[i].lastLowSpeedTime = performance.now();
+    if (cars[i].speed < carMaxSpeed) {
+      lowSpeedPenalty = 99999 * (performance.now() - cars[i].lastLowSpeedTime) / 1000;
     }
 
     let sum = distanceBonus + velocityBonus + survivalBonus + lowSpeedPenalty;
